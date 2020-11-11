@@ -59,7 +59,7 @@ export const commandBundle = async (opts: IOpts = {}) => {
         // bundle dev 模式支持 dll
         config.plugins.push(
           new webpack.DllReferencePlugin({
-            context: '.',
+            context: __dirname,
             // eslint-disable-next-line import/no-dynamic-require,global-require
             manifest: require(path.join(dllOutPath, dllMainfestName)),
           }),

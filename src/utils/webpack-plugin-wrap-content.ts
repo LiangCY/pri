@@ -12,8 +12,8 @@ export class WrapContent {
   }
 
   public apply(compiler: webpack.Compiler) {
-    compiler.plugin('compilation', compilation => {
-      compilation.plugin('optimize-chunk-assets', (chunks: any[], done: any) => {
+    compiler.hooks.compilation.tap('WrapContent', compilation => {
+      compilation.hooks.optimizeChunkAssets.tapAsync('WrapContent', (chunks, done) => {
         chunks.forEach(chunk => {
           chunk.files.forEach((fileName: string) => {
             // Ignore workers
