@@ -29,7 +29,6 @@ export type IOptions<T = {}> = {
   externals?: any[];
   target?: webpack.Configuration['target'];
   libraryTarget?: string;
-  libraryName?: string;
   devtool?: string | false;
 } & T;
 
@@ -177,7 +176,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       library: {
         type: opts.libraryTarget || 'var',
-        name: opts.libraryName || 'lib',
+        name: '[name]',
       },
     },
     module: {
