@@ -323,7 +323,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
     },
     plugins: [],
     optimization: {
-      chunkIds: 'named',
       splitChunks: {
         cacheGroups: {
           default: false,

@@ -10,13 +10,10 @@ import * as WebpackBar from 'webpackbar';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
-import * as SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
 import { getWebpackConfig, IOptions } from './webpack-config';
-
-const smp = new SpeedMeasurePlugin();
 
 interface IExtraOptions {
   pipeConfig?: (config?: webpack.Configuration) => Promise<webpack.Configuration>;
@@ -50,12 +47,14 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  webpackConfig.plugins.push(
-    new CircularDependencyPlugin({
-      exclude: /node_modules/,
-      cwd: process.cwd(),
-    }),
-  );
+  if (yargs.argv.checkCircularDep) {
+    webpackConfig.plugins.push(
+      new CircularDependencyPlugin({
+        exclude: /node_modules/,
+        cwd: process.cwd(),
+      }),
+    );
+  }
 
   const webpackDevServerConfig: WebpackDevServer.Configuration = {
     host: 'localhost',
@@ -89,10 +88,6 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
   } as any;
 
   WebpackDevServer.addDevServerEntrypoints(webpackConfig as any, webpackDevServerConfig);
-
-  if (yargs.argv.measureSpeed) {
-    webpackConfig = smp.wrap(webpackConfig);
-  }
 
   const compiler = webpack(webpackConfig);
 
