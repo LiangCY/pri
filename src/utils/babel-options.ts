@@ -14,7 +14,6 @@ import transformRuntime from '@babel/plugin-transform-runtime';
 import babelPresetEnv from '@babel/preset-env';
 import babelPresetReact from '@babel/preset-react';
 import babelPresetTypescript from '@babel/preset-typescript';
-import babelPluginReactCssModules from 'babel-plugin-react-css-modules';
 import * as babelPluginReactHotLoader from 'react-hot-loader/babel';
 import * as _ from 'lodash';
 import { babelPluginReactWrappedDisplayName } from './babel-plugin-react-wrapped-display-name';
@@ -32,7 +31,11 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
   return {
     babelrc: false,
     comments: globalState.isDevelopment,
-    presets: [[babelPresetEnv, { modules: mergedOptions.modules }], [babelPresetReact], [babelPresetTypescript]],
+    presets: [
+      [babelPresetEnv, { modules: mergedOptions.modules }],
+      [babelPresetReact],
+      [babelPresetTypescript, { onlyRemoveTypeImports: true }],
+    ],
     plugins: [
       [transformRuntime],
       ...(globalState.isDevelopment ? [[babelPluginReactHotLoader]] : []),

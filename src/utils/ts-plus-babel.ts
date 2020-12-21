@@ -2,11 +2,13 @@ import * as gulp from 'gulp';
 import * as fs from 'fs-extra';
 import * as gulpBabel from 'gulp-babel';
 import * as gulpSass from 'gulp-sass';
+import * as gulpLess from 'gulp-less';
 import * as gulpWatch from 'gulp-watch';
 import * as gulpStripCssComments from 'gulp-strip-css-comments';
 import * as gulpConcatCss from 'gulp-concat-css';
 import * as gulpIf from 'gulp-if';
 import * as gulpSourcemaps from 'gulp-sourcemaps';
+import * as mergeStream from 'merge-stream';
 import * as path from 'path';
 import { pri, srcPath } from '../node';
 import { plugin } from './plugins';
@@ -20,6 +22,7 @@ function getGulpByWatch(watch: boolean, filesPath: string) {
   if (watch) {
     return gulpWatch(filesPath);
   }
+  /** 文件匹配 */
   return gulp.src(filesPath);
 }
 
@@ -47,25 +50,48 @@ const buildTs = (watch: boolean, outdir: string, babelOptions: any, wholeProject
   });
 };
 
-const buildSass = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
-  const targetPath =
-    wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
-      ? path.join(pri.projectRootPath, '{src,packages}/**/*.scss')
-      : path.join(sourcePath || pri.sourceRoot, srcPath.dir, '**/*.scss');
+/** 获取样式文件路径 */
+function getStyleFilePath(suffix: string, wholeProject: boolean, sourcePath: string) {
+  return wholeProject || (pri.selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
+    ? path.join(pri.projectRootPath, `{src,packages}/**/*.${suffix}`)
+    : path.join(sourcePath || pri.sourceRoot, srcPath.dir, `**/*.${suffix}`);
+}
 
-  return new Promise((resolve, reject) => {
-    getGulpByWatch(watch, targetPath)
-      .pipe(
-        gulpSass({
-          includePaths: path.join(pri.projectRootPath, 'node_modules'),
-        }),
-      )
+const buildSass = (wholeProject: boolean, sourcePath: string) => {
+  const targetScssPath = getStyleFilePath('scss', wholeProject, sourcePath);
+  return gulp.src(targetScssPath).pipe(
+    gulpSass({
+      includePaths: path.join(pri.projectRootPath, 'node_modules'),
+    }),
+  );
+};
+
+const buildLess = (wholeProject: boolean, sourcePath: string) => {
+  const targetLessPath = getStyleFilePath('less', wholeProject, sourcePath);
+  return gulp.src(targetLessPath).pipe(
+    gulpLess({
+      paths: [path.join(pri.projectRootPath, 'node_modules', 'includes')],
+    }),
+  );
+};
+
+const buildSassAndLess = (watch: boolean, outdir: string, wholeProject: boolean, sourcePath: string) => {
+  const targetPath = getStyleFilePath('{scss,less}', wholeProject, sourcePath);
+  const mergeStyle = (resolve: (value?: any) => void, reject: (value?: any) => void) =>
+    mergeStream(buildLess(wholeProject, sourcePath), buildSass(wholeProject, sourcePath))
       .pipe(gulpIf(pri.sourceConfig.cssExtract, gulpConcatCss(pri.sourceConfig.outCssFileName)))
       .pipe(gulpStripCssComments())
       .on('error', reject)
       .pipe(gulp.dest(outdir))
       .on('end', resolve);
-  });
+  if (watch) {
+    return new Promise((resolve, reject) => {
+      gulpWatch(targetPath, () => {
+        mergeStyle(resolve, reject);
+      });
+    });
+  }
+  return new Promise(mergeStyle);
 };
 
 const buildCssWithWebpack = (outDir: string, copyDir: string) => {
@@ -102,12 +128,12 @@ const mvResources = (
     wholeProject || (selectedSourceType === 'root' && pri.sourceConfig.cssExtract)
       ? path.join(
           pri.projectRootPath,
-          `{src,packages}/**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+          `{src,packages}/**/*.{js,json,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
         )
       : path.join(
           sourcePath || pri.sourceRoot,
           srcPath.dir,
-          `**/*.{js,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
+          `**/*.{js,json,png,jpg,jpeg,gif,woff,woff2,eot,ttf,svg${moveStyle ? ',css,scss,less' : ''}}`,
         );
 
   return new Promise((resolve, reject) => {
@@ -171,8 +197,8 @@ export const tsPlusBabel = async (watch = false, wholeProject = false, packageIn
   }
 
   return Promise.all([
-    pri.sourceConfig.componentEntries ? null : buildSass(watch, mainDistPath, wholeProject, sourcePath),
-    pri.sourceConfig.componentEntries ? null : buildSass(watch, moduleDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, mainDistPath, wholeProject, sourcePath),
+    pri.sourceConfig.componentEntries ? null : buildSassAndLess(watch, moduleDistPath, wholeProject, sourcePath),
 
     buildTs(
       watch,
