@@ -54,7 +54,7 @@ async function debugDashboard() {
     publicPath: '/static/',
     entryPath: dashboardEntryFilePath,
     devServerPort: freePort,
-    outFileName: 'main.[hash].js',
+    outFileName: 'main.[contenthash].js',
     htmlTemplatePath: path.join(__dirname, '../../../../template-dashboard.ejs'),
     htmlTemplateArgs: {
       dashboardServerPort,
@@ -111,7 +111,7 @@ async function debugProject(options?: any) {
       publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: 'main.[hash].js', // dashboard has no css file
+      outFileName: 'main.[contenthash].js', // dashboard has no css file
       pipeConfig,
     });
     projectState.set('dashboardHash', status.hash);

@@ -176,9 +176,7 @@ export const getWebpackConfig = async (opts: IOptions) => {
       path: distDir,
       filename: outFileName,
       publicPath,
-      chunkFilename: '[name].[hash].chunk.js',
-      hotUpdateChunkFilename: 'hot~[id].[hash].chunk.js',
-      hotUpdateMainFilename: 'hot-update.[hash].json',
+      chunkFilename: '[name].[chunkhash].chunk.js',
       hashDigestLength: 4,
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       library: {
