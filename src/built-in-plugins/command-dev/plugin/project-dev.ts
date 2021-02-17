@@ -14,11 +14,11 @@ import { getPluginsByOrder } from '../../../utils/plugins';
 import { prettierConfig } from '../../../utils/prettier-config';
 import * as projectState from '../../../utils/project-state';
 import { tempJsEntryPath, tempPath } from '../../../utils/structor-config';
-import { runWebpack } from '../../../utils/webpack';
+import { runWebpack, bundleDlls } from '../../../utils/webpack';
 import { runWebpackDevServer } from '../../../utils/webpack-dev-server';
 import dashboardClientServer from './dashboard/server/client-server';
 import dashboardServer from './dashboard/server/index';
-import { bundleDlls, dllMainfestName, dllOutPath, libraryStaticPath } from './dll';
+import { dllOutPath, dllFileName, dllMainfestName, libraryStaticPath } from './dll';
 
 const dashboardBundleFileName = 'main';
 
@@ -26,7 +26,7 @@ export const projectDev = async (options: any) => {
   if (options && options.debugDashboard) {
     await debugDashboard();
   } else {
-    await debugProject();
+    await debugProject(options);
   }
 };
 
@@ -62,7 +62,7 @@ async function debugDashboard() {
   });
 }
 
-async function debugProject() {
+async function debugProject(options?: any) {
   const freePort = pri.sourceConfig.devPort || (await portfinder.getPortPromise());
   const dashboardServerPort = await portfinder.getPortPromise({ port: freePort + 1 });
   const dashboardClientPort = await portfinder.getPortPromise({ port: freePort + 2 });
@@ -99,7 +99,7 @@ async function debugProject() {
     return scopeAnalyseInfo;
   });
 
-  await bundleDlls();
+  await bundleDlls({ dllOutPath, dllFileName, dllMainfestName });
 
   // Bundle dashboard if plugins changed or dashboard bundle not exist.
   const dashboardDistDir = path.join(pri.projectRootPath, tempPath.dir, 'static/dashboard-bundle');
@@ -142,11 +142,18 @@ async function debugProject() {
 
   // Serve project
   await runWebpackDevServer({
-    mode: 'development',
+    mode: options?.mode ?? 'development',
     autoOpenBrowser: true,
     hot: pri.sourceConfig.hotReload,
     publicPath: globalState.sourceConfig.publicPath,
-    entryPath: path.join(globalState.projectRootPath, path.format(tempJsEntryPath)),
+    entryPath: {
+      [path.basename(pri.sourceConfig.outFileName, '.js')]: path.join(
+        globalState.projectRootPath,
+        path.format(tempJsEntryPath),
+      ),
+      ...pri.sourceConfig.entries,
+    },
+    outFileName: '[name].js',
     devServerPort: freePort,
     htmlTemplatePath: path.join(__dirname, '../../../../template-project.ejs'),
     htmlTemplateArgs: {

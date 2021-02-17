@@ -17,7 +17,7 @@ export interface IHtmlTemplateArgs {
   appendBody?: string;
 }
 
-export type IOptions<T = {}> = {
+export type IOptions<T = unknown> = {
   mode: 'development' | 'production';
   entryPath: string | string[] | IEntryPath;
   htmlTemplatePath?: string;
@@ -118,9 +118,13 @@ export const getWebpackConfig = async (opts: IOptions) => {
 
   const sassLoader = {
     loader: 'sass-loader',
-    options: plugin.buildConfigSassLoaderOptionsPipes.reduce((options, fn) => {
-      return fn(options);
-    }, {}),
+    options: plugin.buildConfigSassLoaderOptionsPipes.reduce(
+      (options, fn) => {
+        return fn(options);
+      },
+      // eslint-disable-next-line global-require
+      { implementation: require('sass') },
+    ),
   };
 
   const lessLoader = {

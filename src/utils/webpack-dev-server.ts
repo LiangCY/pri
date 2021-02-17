@@ -10,6 +10,7 @@ import * as WebpackBar from 'webpackbar';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import * as _ from 'lodash';
 import * as WebpackDevServer from 'webpack-dev-server';
+import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { globalState } from './global-state';
 import { tempPath } from './structor-config';
 import { logInfo } from './log';
@@ -28,6 +29,7 @@ interface IExtraOptions {
 
 const stats = {
   warnings: true,
+  assets: false,
   version: false,
   modules: false,
   entrypoints: false,
@@ -47,11 +49,24 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
 
   webpackConfig.plugins.push(new WebpackBar());
 
-  if (yargs.argv.checkCircularDep) {
+  // If set open in project config, perform a circular dependency check
+  if (globalState.projectConfig.circularDetect?.enable) {
+    const exclude = globalState.projectConfig.circularDetect?.exclude;
     webpackConfig.plugins.push(
       new CircularDependencyPlugin({
-        exclude: /node_modules/,
+        exclude: exclude ? new RegExp(exclude) : /node_modules/,
         cwd: process.cwd(),
+      }),
+    );
+  }
+
+  if (!yargs.argv.skipTypeCheck) {
+    webpackConfig.plugins.push(
+      new ForkTsCheckerWebpackPlugin({
+        typescript: {
+          memoryLimit: 8192,
+          mode: 'write-references',
+        },
       }),
     );
   }
@@ -62,6 +77,14 @@ export const runWebpackDevServer = async (opts: IOptions<IExtraOptions>) => {
     hotOnly: opts.hot,
     publicPath: opts.publicPath,
     before: (app: any) => {
+      app.use((req: any, res: any, next: any) => {
+        // CORS
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+        res.setHeader('Access-Control-Allow-Credentials', true);
+        next();
+      });
       app.use('/', express.static(path.join(globalState.projectRootPath, tempPath.dir, 'static')));
     },
     compress: true,

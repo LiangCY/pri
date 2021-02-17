@@ -75,6 +75,14 @@ export class ProjectInfo {
 }
 
 /**
+ * circular dependency detect config
+ */
+interface ICircularDetectConfig {
+  enable?: boolean;
+  exclude?: string;
+}
+
+/**
  * Types for globalState
  */
 export class GlobalState {
@@ -286,6 +294,16 @@ export class ProjectConfig {
    * extra vendors defined in priConfig, which you dont want to rebundle during project rebuid
    */
   public extraVendors: string[] = [];
+
+  /*
+   * project extra entries
+   */
+  public entries: IEntryPath;
+
+  /**
+   * circular dependency detect config
+   */
+  public circularDetect?: ICircularDetectConfig;
 }
 
 export type SetPipe = (pipeName: string, callback: PipeCallback) => void;
