@@ -1,6 +1,6 @@
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import * as OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import * as CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import * as yargs from 'yargs';
@@ -176,7 +176,6 @@ export const getWebpackConfig = async (opts: IOptions) => {
       path: distDir,
       filename: outFileName,
       publicPath,
-      chunkFilename: '[name].[chunkhash].chunk.js',
       hashDigestLength: 4,
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       library: {
@@ -354,9 +353,8 @@ export const getWebpackConfig = async (opts: IOptions) => {
           filename: outCssFileName,
         }),
       );
+      config.optimization.minimizer = ['...', new CssMinimizerPlugin()];
     }
-
-    config.plugins.push(new OptimizeCssAssetsPlugin());
   }
 
   if (globalState.isDevelopment) {
