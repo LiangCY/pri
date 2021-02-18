@@ -111,7 +111,7 @@ async function debugProject(options?: any) {
       publicPath: '/bundle/',
       entryPath: dashboardEntryFilePath,
       distDir: dashboardDistDir,
-      outFileName: 'main.[contenthash].js', // dashboard has no css file
+      outFileName: 'main.[fullhash].js', // dashboard has no css file
       pipeConfig,
     });
     projectState.set('dashboardHash', status.hash);
