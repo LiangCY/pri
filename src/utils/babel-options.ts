@@ -1,7 +1,6 @@
 import babelPluginProposalClassProperties from '@babel/plugin-proposal-class-properties';
 import babelPluginProposalDecorators from '@babel/plugin-proposal-decorators';
 import babelPluginProposalExportNamespace from '@babel/plugin-proposal-export-namespace-from';
-import babelPluginProposalFunctionSent from '@babel/plugin-proposal-function-sent';
 import babelPluginProposalJsonStrings from '@babel/plugin-proposal-json-strings';
 import babelPluginProposalNumericSeparator from '@babel/plugin-proposal-numeric-separator';
 import babelPluginProposalOptionalCatchBinding from '@babel/plugin-proposal-optional-catch-binding';
@@ -36,7 +35,6 @@ export function getBabelOptions(options?: Partial<DefaultOptions>) {
       ...(globalState.isDevelopment ? [[babelPluginReactHotLoader]] : []),
       [babelPluginProposalDecorators, { legacy: true }],
       [babelPluginProposalExportNamespace],
-      [babelPluginProposalFunctionSent],
       [babelPluginProposalNumericSeparator],
       [babelPluginProposalThrowExpressions],
       [babelPluginProposalOptionalChaining],

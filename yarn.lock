@@ -486,15 +486,6 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-syntax-export-namespace-from" "^7.8.3"
 
-"@babel/plugin-proposal-function-sent@7.12.1":
-  version "7.12.1"
-  resolved "https://registry.npm.alibaba-inc.com/@babel/plugin-proposal-function-sent/download/@babel/plugin-proposal-function-sent-7.12.1.tgz#8f302aa8ab5f00af6c94a3e1108fa35d15319510"
-  integrity sha1-jzAqqKtfAK9slKPhEI+jXRUxlRA=
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.10.4"
-    "@babel/helper-wrap-function" "^7.10.4"
-    "@babel/plugin-syntax-function-sent" "^7.12.1"
-
 "@babel/plugin-proposal-json-strings@7.12.1", "@babel/plugin-proposal-json-strings@^7.12.1":
   version "7.12.1"
   resolved "https://registry.npm.alibaba-inc.com/@babel/plugin-proposal-json-strings/download/@babel/plugin-proposal-json-strings-7.12.1.tgz#d45423b517714eedd5621a9dfdc03fa9f4eb241c"
@@ -644,13 +635,6 @@
   integrity sha1-AolkqbqA28CUyRXEh618TnpmRlo=
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.3"
-
-"@babel/plugin-syntax-function-sent@^7.12.1":
-  version "7.12.1"
-  resolved "https://registry.npm.alibaba-inc.com/@babel/plugin-syntax-function-sent/download/@babel/plugin-syntax-function-sent-7.12.1.tgz#b5355304f0b0fb0cb1bf315903bf7cd13608e811"
-  integrity sha1-tTVTBPCw+wyxvzFZA7980TYI6BE=
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.10.4"
 
 "@babel/plugin-syntax-import-meta@^7.8.3":
   version "7.10.4"
