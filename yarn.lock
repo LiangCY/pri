@@ -652,7 +652,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.10.4"
 
-"@babel/plugin-syntax-import-meta@7.10.4", "@babel/plugin-syntax-import-meta@^7.8.3":
+"@babel/plugin-syntax-import-meta@^7.8.3":
   version "7.10.4"
   resolved "https://registry.npm.alibaba-inc.com/@babel/plugin-syntax-import-meta/download/@babel/plugin-syntax-import-meta-7.10.4.tgz#ee601348c370fa334d2207be158777496521fd51"
   integrity sha1-7mATSMNw+jNNIge+FYd3SWUh/VE=
@@ -13781,9 +13781,9 @@ stack-trace@0.0.10:
   integrity sha1-VHxws0fo0ytOEI6hoqFZ5f3eGcA=
 
 stack-utils@^1.0.1:
-  version "1.0.3"
-  resolved "https://registry.npm.alibaba-inc.com/stack-utils/download/stack-utils-1.0.3.tgz#db7a475733b5b8bf6521907b18891d29006f7751"
-  integrity sha1-23pHVzO1uL9lIZB7GIkdKQBvd1E=
+  version "1.0.4"
+  resolved "https://registry.npm.alibaba-inc.com/stack-utils/download/stack-utils-1.0.4.tgz#4b600971dcfc6aed0cbdf2a8268177cc916c87c8"
+  integrity sha1-S2AJcdz8au0MvfKoJoF3zJFsh8g=
   dependencies:
     escape-string-regexp "^2.0.0"
 
@@ -15556,7 +15556,12 @@ ws@^6.2.1:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7.0.0, ws@^7.1.2, ws@^7.3.1:
+ws@^7.0.0:
+  version "7.4.3"
+  resolved "https://registry.npm.alibaba-inc.com/ws/download/ws-7.4.3.tgz#1f9643de34a543b8edb124bdcbc457ae55a6e5cd"
+  integrity sha1-H5ZD3jSlQ7jtsSS9y8RXrlWm5c0=
+
+ws@^7.1.2, ws@^7.3.1:
   version "7.4.0"
   resolved "https://registry.npm.alibaba-inc.com/ws/download/ws-7.4.0.tgz#a5dd76a24197940d4a8bb9e0e152bb4503764da7"
   integrity sha1-pd12okGXlA1Ki7ng4VK7RQN2Tac=
