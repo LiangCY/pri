@@ -301,6 +301,9 @@ function ensureRootPackageJson() {
               pkg.version;
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+
+            // Add babel-runtime
+            _.set(prevJson, 'dependencies.@babel/runtime', priDeps['@babel/runtime']);
           }
           break;
         case 'component':
@@ -312,6 +315,9 @@ function ensureRootPackageJson() {
               pkg.version;
             _.unset(prevJson, `dependencies.${PRI_PACKAGE_NAME}`);
             _.set(prevJson, `devDependencies.${PRI_PACKAGE_NAME}`, projectPriVersion);
+
+            // Add babel-runtime
+            _.set(prevJson, 'dependencies.@babel/runtime', priDeps['@babel/runtime']);
           }
           break;
         default:
